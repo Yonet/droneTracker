@@ -1,0 +1,26 @@
+<div ng-include="'components/navbar/navbar.html'"></div>
+
+<header class="hero-unit" id="banner">
+  <div class="container">
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="row" id="map-canvas" plan-coordinates="::planCoordinates" actual-coordinates="actualCoordinates" google-map>
+  </div>
+  <button class="btn btn-primary" ng-click="startDrone()">Start</button>
+  <button class="btn btn-primary" ng-click="pauseDrone()">Pause</button>
+  <button class="btn btn-primary" ng-click="stopDrone()">Stop</button>
+  <button class="btn btn-primary" ng-click="goBack()">Go Back</button>
+  
+ 
+</div>
+
+<footer class="footer">
+  <div class="container">
+      <p>Angular Fullstack v2.0.13 |
+        <a href="https://twitter.com/tyhenkel">@tyhenkel</a> |
+         <a href="https://github.com/DaftMonk/generator-angular-fullstack/issues?state=open">Issues</a></p>
+  </div>
+</footer>
