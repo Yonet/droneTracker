@@ -40,25 +40,15 @@ module.exports = function (socketio) {
 
      // Call startDrone
     socket.on('startDrone', function (data) {
-      console.log('startDrone happened', data)
-      var i = 0;
-      var moveInterval = setInterval(function(){
-        console.log('moving drone');
-        socket.emit('moveDrone', {newCoordinate:coordinates[i]});
-        
-        if(i > coordinates.length) {
-          console.log('removing interval now')
-          clearInterval(moveInterval);
-        }
-        i++;
-        socket.on('pauseDrone', function(){ return clearInterval(moveInterval);})
-      }, 1000);
-      
+      socket.emit('startDrone');
     });
 
     socket.on('pauseDrone', function (location) {
       // console.log('pauseDrone happened', location);
       socket.emit('pauseDrone', location);
+    });
+    socket.on('stopDrone', function (location) {
+      socket.emit('stopDrone', location);
     });
 
 

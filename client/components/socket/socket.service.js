@@ -73,8 +73,8 @@ angular.module('droneTrackerApp')
 
       pauseDrone: function(location) {
         console.log('pauseDrone is called on service');
-        socket.emit('pauseDrone', function(location) {
-          console.log('Socket service drone paused event data', location);
+        socket.emit('pauseDrone', function() {
+          console.log('Socket service drone paused event data');
         })
       },
 
