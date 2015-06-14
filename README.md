@@ -27,7 +27,7 @@ A Google Maps visualization of tracking a drone.
 [AngularJS]: https://angularjs.org/
 [Socket.IO]: http://socket.io/
 [Node.js]: http://nodejs.org/
-[HTML & CSS]: https://developer.mozilla.org/en-US/
+[HTML & CSS & Bootstrap]: https://developer.mozilla.org/en-US/
 
 
 # License
