@@ -34,21 +34,18 @@ module.exports = function (socketio) {
     // Call onDisconnect.
     socket.on('disconnect', function () {
       onDisconnect(socket);
-      console.info('[%s] DISCONNECTED', socket.address);
-      console.log('logging [%s] DISCONNECTED', socket.address);
     });
 
      // Call startDrone
-    socket.on('startDrone', function (data) {
+    socket.on('startDrone', function () {
       socket.emit('startDrone');
     });
 
-    socket.on('pauseDrone', function (location) {
-      // console.log('pauseDrone happened', location);
-      socket.emit('pauseDrone', location);
+    socket.on('pauseDrone', function () {
+      socket.emit('pauseDrone');
     });
-    socket.on('stopDrone', function (location) {
-      socket.emit('stopDrone', location);
+    socket.on('stopDrone', function () {
+      socket.emit('stopDrone');
     });
 
 

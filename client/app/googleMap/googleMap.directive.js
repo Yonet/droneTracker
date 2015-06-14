@@ -6,15 +6,22 @@ angular.module('droneTrackerApp')
  
 			restrict: 'EA',
 			scope:{
-				planCoordinates: '='
+				planCoordinates: '=',
+				offset: '='
 			},
 			link: function (scope, element, attrs) {
-				element.text('this is the googleMap directive');
+				//Canvas element to initialize the Google map
 				var mapCanvas = document.getElementById('map-canvas');
-				var move;
+				//move interval
+				var move, totalTime, icons;
+
+				//initial drone offset from the start position
 				var offset = '0%';
 				var offsetPercantage = 0;
+
+				//Drone path coordinates
 				var coordinatesArray = scope.planCoordinates;
+
 				//drone moving symbol options
 				var droneSymbol = {
 					path: google.maps.SymbolPath.CIRCLE,
@@ -22,6 +29,7 @@ angular.module('droneTrackerApp')
 					strokeColor: '#393'
 				};
 
+				//Converts each coordinate to path points for google maps
 				var coordinateToPathPoints = function(coordinatesArray){
 					var mapPoints = [];
 					angular.forEach(coordinatesArray, function(value, key){
@@ -40,11 +48,14 @@ angular.module('droneTrackerApp')
 						return flightPlanCoordinates[ind];
 					}
 				}
+				var centerCoord = calculateCenter();
+
+				//Number to radians 
 				var toRadians = function(num){
 					return num * Math.PI / 180;	
 				}
 
-
+				// Calculates total distance of the path
 				var calculateDistance = function(coord1, coord2){
 					var R = 6371000; // metres
 					var φ1 = toRadians(coord1[0]);
@@ -60,6 +71,7 @@ angular.module('droneTrackerApp')
 					return d;
 				}
 
+				//Calculates the total time the drone will travel the path
 				var calculateTime = function(){
 					var distance = 0;
 					for(var i = 1; i < coordinatesArray.length; i++){
@@ -67,12 +79,8 @@ angular.module('droneTrackerApp')
 						distance += currentDist;
 					}
 					var time = distance / 10;//seconds for total
-					console.log('distance', distance, time);
 					return time;
 				}
-				
-
-				var centerCoord = calculateCenter();
 
 				//main map options.
 				var mapOptions = {
@@ -80,10 +88,11 @@ angular.module('droneTrackerApp')
 					zoom: 17,
 					mapTypeId: google.maps.MapTypeId.ROADMAP
 				}
-				
 
+				//Initilized map
 				var map = new google.maps.Map(mapCanvas, mapOptions)
 
+				// Draws path polyline
 				var flightPath = new google.maps.Polyline({
 					path: flightPlanCoordinates,
 					geodesic: true,
@@ -96,86 +105,53 @@ angular.module('droneTrackerApp')
 					strokeWeight: 2
 				});
 
-
+				// Attaches path to map
 				flightPath.setMap(map);
 
+				var stopDrone = function(){
+					icons = flightPath.get('icons');
+					offset = icons[0].offset;
+					clearInterval(move);
+				}
 
+				//animates backwords to the starting position
+				var moveBack = function(){
+					icons = flightPath.get('icons');
+					offsetPercantage = offset.split('%')[0];
+					move = window.setInterval(function() {
+						offsetPercantage -= 1/totalTime * 100;
+						if(offsetPercantage === 0) {
+							clearInterval(move); 
+							icons[0].offset = '0%'; 
+							return;
+						}
+						icons[0].offset = offsetPercantage + '%';
+						flightPath.set('icons', icons);
+					}, 1000);
+				}
 
-
-				socket.socket.on('startDrone', animateCircle)
-
-
-				
+				//Animates drone position
 				function animateCircle() {
-					var totalTime = calculateTime();
-					var offsetPercantage = 0;
-					var icons = flightPath.get('icons');
-					var stopDrone = function(){
-						offset = icons[0].offset;
-						clearInterval(move);
-					}
-
-					var moveBack = function(){
-						offsetPercantage = offset.split('%')[0];
-						console.log('offsetPercantage', offsetPercantage);
-						var move = window.setInterval(function() {
-							offsetPercantage -= 1/totalTime * 100;
-							if(offsetPercantage === 0) {
-								clearInterval(move); 
-								icons[0].offset = '0%'; 
-								return;
-							}
-							icons[0].offset = offsetPercantage + '%';
-							flightPath.set('icons', icons);
-						}, 1000);
-					}
-					socket.socket.on('pauseDrone', stopDrone);
-					socket.socket.on('stopDrone', function(){
-						
-						// icons[0].offset = offset ='0%';
-						// flightPath.set('icons', icons);
-						stopDrone();
-						moveBack();
-					})
-					// socket.socket.on('pauseDrone', function(){
-					// 	return clearInterval(move);
-					// })
-
-					// socket.socket.on('stopDrone', function(){
-					// 	return clearInterval(move);
-					// })
+					totalTime = calculateTime();
+					icons = flightPath.get('icons');
+					icons[0].offset = offset;
 					move = window.setInterval(function() {
 						offsetPercantage += 1/totalTime * 100;
 						if(icons[0].offset === '100%') {clearInterval(move);}
 						icons[0].offset = offsetPercantage + '%';
 						flightPath.set('icons', icons);
-					}, 1000);
-					///move
+					}, 1000);///move
 
-					socket.socket.on('startDrone', function(){
-							
-							icons[0].offset = offset;
-							flightPath.set('icons', icons);
-							move = window.setInterval(function() {
-								offsetPercantage += 1/totalTime * 100;
+				}///Animate
+			
+				//Watch for drone event
+				socket.socket.on('startDrone', animateCircle);
+				socket.socket.on('pauseDrone', stopDrone);
+				socket.socket.on('stopDrone', function(){
+						stopDrone();
+						moveBack();
+				})///stopDrone
 
-								var icons = flightPath.get('icons');
-								icons[0].offset = offsetPercantage + '%';
-								flightPath.set('icons', icons);
-								socket.socket.on('pauseDrone', function(){
-									offset = icons[0].offset;
-									return clearInterval(move);
-								})
-								
-
-							}, 1000);
-							
-					})///startDrone
-
-				}
-				//Animate
-
-			}
-			//Link
-		};
+			}///Link
+		};///returned
 	});

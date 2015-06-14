@@ -2,23 +2,19 @@
 
 <header class="hero-unit" id="banner">
   <div class="container">
+    <button class="btn btn-default" ng-click="startDrone()">Start</button>
+    <button class="btn btn-default" ng-click="pauseDrone()">Pause</button>
+    <button class="btn btn-default" ng-click="stopDrone()">Go Back</button>
   </div>
 </header>
 
-<div class="container">
-
-  <div class="row" id="map-canvas" plan-coordinates="::planCoordinates" actual-coordinates="actualCoordinates" google-map>
-  </div>
-  <button class="btn btn-primary" ng-click="startDrone()">Start</button>
-  <button class="btn btn-primary" ng-click="pauseDrone()">Pause</button>
-  <button class="btn btn-primary" ng-click="stopDrone()">Stop</button>
-  
+<div class="row" id="map-canvas" plan-coordinates="::planCoordinates" offset="offset" google-map>
 </div>
-
+  
 <footer class="footer">
   <div class="container">
-      <p>Angular Fullstack v2.0.13 |
-        <a href="https://twitter.com/tyhenkel">@tyhenkel</a> |
-         <a href="https://github.com/DaftMonk/generator-angular-fullstack/issues?state=open">Issues</a></p>
+      <p>Drone Tracker |
+        <a href="https://twitter.com/AysegulYonet" target="_blank">@AysegulYonet</a> |
+         <a href="https://github.com/Yonet/droneTracker" target="_blank">Github</a></p>
   </div>
 </footer>

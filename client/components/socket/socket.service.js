@@ -70,21 +70,5 @@ angular.module('droneTrackerApp')
         socket.removeAllListeners(modelName + ':save');
         socket.removeAllListeners(modelName + ':remove');
       },
-
-      pauseDrone: function(location) {
-        console.log('pauseDrone is called on service');
-        socket.emit('pauseDrone', function() {
-          console.log('Socket service drone paused event data');
-        })
-      },
-
-      startDrone: function(location) {
-        console.log('startDrone is called on service');
-        socket.emit('startDrone', function(location) {
-          console.log('Socket service drone start event data', location);
-        })
-      }
-
-
     };
   });
